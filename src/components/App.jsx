@@ -18,18 +18,18 @@ export class App extends Component {
     ],
     filter: '',
   };
-  addContact = (name, number) => {
-    const contactsNames = this.state.contacts.map(contact =>
-      contact.name.toLowerCase()
+  addContact = contact => {
+    const isInContacts = this.state.contacts.some(
+      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
     );
 
-    if (!contactsNames.includes(name.toLowerCase())) {
-      this.setState(prevState => ({
-        contacts: [...prevState.contacts, { id: nanoid(), name, number }],
-      }));
-    } else {
-      alert(`${name} is already in contacts`);
+    if (isInContacts) {
+      alert(`${contact.name} is already in contacts`);
+      return;
     }
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, { id: nanoid(), ...contact }],
+    }));
   };
   deleteContact = id => {
     this.setState(prevState => ({
@@ -54,17 +54,22 @@ export class App extends Component {
     return (
       <Container>
         <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.addContact}></ContactForm>
+        <ContactForm onSubmit={this.addContact} />
         <h2>Contacts</h2>
-        <Filter value={filter} onChange={this.changeFilter}></Filter>
-        {contacts.length > 0 && (
-          <ContactList
-            items={filter ? filteredContacts : contacts}
-            onDeleteContact={this.deleteContact}
-          ></ContactList>
+        {contacts.length > 0 ? (
+          <Filter value={filter} onChange={this.changeFilter} />
+        ) : (
+          'Your phonebook is empty. Add first contact!'
         )}
 
-        <GlobalStyle></GlobalStyle>
+        {contacts.length > 0 && (
+          <ContactList
+            items={filteredContacts}
+            onDeleteContact={this.deleteContact}
+          />
+        )}
+
+        <GlobalStyle />
       </Container>
     );
   }

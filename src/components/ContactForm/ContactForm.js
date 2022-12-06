@@ -12,8 +12,8 @@ export class ContactForm extends Component {
   numberInputId = nanoid();
   handleSubmit = event => {
     event.preventDefault();
-    const { name, number } = event.target.elements;
-    this.props.onSubmit(name.value, number.value);
+
+    this.props.onSubmit({ name: this.state.name, number: this.state.number });
     this.setState({ name: '', number: '' });
   };
   handleChange = event => {
